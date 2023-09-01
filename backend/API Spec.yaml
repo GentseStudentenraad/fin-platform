@@ -1,0 +1,594 @@
+openapi: "3.0.0"
+info:
+  title: "Financieel Beheerprogramma API"
+  version: "1.0.0"
+
+paths:
+
+  /api/auth/login:
+    post:
+      summary: "Inloggen"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gebruikersnaam:
+                  type: string
+                wachtwoord:
+                  type: string
+      responses:
+        '200':
+          description: "Succesvol ingelogd"
+
+  /api/auth/registreren:
+    post:
+      summary: "Registreren"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gebruikersnaam:
+                  type: string
+                wachtwoord:
+                  type: string
+                email:
+                  type: string
+                naam:
+                  type: string
+                rol_id:
+                  type: integer
+                organisatie_id:
+                  type: integer
+      responses:
+        '201':
+          description: "Succesvol geregistreerd"
+
+  /api/boekjaar:
+    post:
+      summary: "Aanmaken van een Boekjaar"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jaartal:
+                  type: integer
+                afgerond:
+                  type: boolean
+      responses:
+        '201':
+          description: "Boekjaar succesvol aangemaakt"
+
+  /api/boekjaar/{id}/afronden:
+    put:
+      summary: "Afsluiten van een Boekjaar"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Boekjaar succesvol afgesloten"
+
+  /api/fund:
+    post:
+      summary: "Aanmaken van een Fund"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                description:
+                  type: string
+                boekjaar_id:
+                  type: integer
+      responses:
+        '201':
+          description: "Fund succesvol aangemaakt"
+
+  /api/fund/{id}:
+    get:
+      summary: "Ophalen van een Fund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Fund succesvol opgehaald"
+    delete:
+      summary: "Verwijderen van een Fund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Fund succesvol verwijderd"
+    put:
+      summary: "Aanpassen van een Fund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: "Fund succesvol aangepast"
+
+  /api/subfund:
+    post:
+      summary: "Aanmaken van een SubFund"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                budget:
+                  type: number
+                  format: float
+                description:
+                  type: string
+                fund_id:
+                  type: integer
+      responses:
+        '201':
+          description: "SubFund succesvol aangemaakt"
+
+  /api/subfund/{id}:
+    get:
+      summary: "Ophalen van een SubFund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "SubFund succesvol opgehaald"
+    delete:
+      summary: "Verwijderen van een SubFund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "SubFund succesvol verwijderd"
+    put:
+      summary: "Aanpassen van een SubFund"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                budget:
+                  type: number
+                  format: float
+                beschrijving:
+                  type: string
+      responses:
+        '200':
+          description: "SubFund succesvol aangepast"
+
+  /api/kost:
+    post:
+      summary: "Aanmaken van een Kost"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subfund_id:
+                  type: integer
+                hoeveelheid:
+                  type: number
+                  format: float
+                uitleg:
+                  type: string
+                type:
+                  type: string
+                ontvanger:
+                  type: string
+                opmerkingen:
+                  type: string
+      responses:
+        '201':
+          description: "Kost succesvol aangemaakt"
+
+  /api/kost/{id}/goedkeuren:
+    put:
+      summary: "Goedkeuren of Afkeuren van een Kost"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goedgekeurd:
+                  type: boolean
+      responses:
+        '200':
+          description: "Koststatus succesvol bijgewerkt"
+
+  /api/kost/{id}/verwerken:
+    put:
+      summary: "Finaal Doorsturen van een Verwerkte Kost"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Kost succesvol verwerkt"
+
+  /api/overzicht/funds:
+    get:
+      summary: "Overzicht van Funds en SubFunds"
+      responses:
+        '200':
+          description: "Overzicht succesvol opgehaald"
+
+  /api/overzicht/kosten/{gebruiker_id}:
+    get:
+      summary: "Overzicht van Ingediende Kosten per Gebruiker"
+      parameters:
+        - name: gebruiker_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Overzicht succesvol opgehaald"
+
+  /api/overzicht/te-behandelen-kosten:
+    get:
+      summary: "Overzicht van Nog te Behandelen Kosten"
+      responses:
+        '200':
+          description: "Overzicht succesvol opgehaald"
+
+  /api/herbegroting:
+    post:
+      summary: "Uitvoeren van een Herbegroting"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                boekjaar_id:
+                  type: integer
+                van_subfund_id:
+                  type: integer
+                naar_subfund_id:
+                  type: integer
+                hoeveelheid:
+                  type: number
+                  format: float
+      responses:
+        '201':
+          description: "Herbegroting succesvol uitgevoerd"
+  # CRUD voor Boekjaar
+  /api/boekjaar/{id}:
+    get:
+      summary: "Ophalen van een Boekjaar"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Boekjaar succesvol opgehaald"
+    delete:
+      summary: "Verwijderen van een Boekjaar"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Boekjaar succesvol verwijderd"
+
+  # CRUD voor Kost
+  /api/kost/{id}:
+    get:
+      summary: "Ophalen van een Kost"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Kost succesvol opgehaald"
+    delete:
+      summary: "Verwijderen van een Kost"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Kost succesvol verwijderd"
+  # CRUD voor Organisatie
+  /api/organisatie:
+    post:
+      summary: "Aanmaken van een Organisatie"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                isKonvent:
+                  type: boolean
+                isUGentErkend:
+                  type: boolean
+      responses:
+        '201':
+          description: "Organisatie succesvol aangemaakt"
+  /api/organisatie/{id}:
+    get:
+      summary: "Ophalen van een Organisatie"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Organisatie succesvol opgehaald"
+    put:
+      summary: "Bijwerken van een Organisatie"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                isKonvent:
+                  type: boolean
+                isUGentErkend:
+                  type: boolean
+      responses:
+        '200':
+          description: "Organisatie succesvol bijgewerkt"
+    delete:
+      summary: "Verwijderen van een Organisatie"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Organisatie succesvol verwijderd"
+
+  # CRUD voor Rol
+  /api/rol:
+    post:
+      summary: "Aanmaken van een Rol"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+      responses:
+        '201':
+          description: "Rol succesvol aangemaakt"
+  /api/rol/{id}:
+    get:
+      summary: "Ophalen van een Rol"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Rol succesvol opgehaald"
+    put:
+      summary: "Bijwerken van een Rol"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+      responses:
+        '200':
+          description: "Rol succesvol bijgewerkt"
+    delete:
+      summary: "Verwijderen van een Rol"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Rol succesvol verwijderd"
+
+  # CRUD voor Gebruiker (User)
+  /api/gebruiker/{id}:
+    get:
+      summary: "Ophalen van een Gebruiker"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Gebruiker succesvol opgehaald"
+    put:
+      summary: "Bijwerken van een Gebruiker"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                naam:
+                  type: string
+                email:
+                  type: string
+                rol_id:
+                  type: integer
+                organisatie_id:
+                  type: integer
+      responses:
+        '200':
+          description: "Gebruiker succesvol bijgewerkt"
+    delete:
+      summary: "Verwijderen van een Gebruiker"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Gebruiker succesvol verwijderd"
+
+  # CRUD voor Herbegroting
+  /api/herbegroting/{id}:
+    get:
+      summary: "Ophalen van een Herbegroting"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Herbegroting succesvol opgehaald"
+    put:
+      summary: "Bijwerken van een Herbegroting"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                boekjaar_id:
+                  type: integer
+                van_subfund_id:
+                  type: integer
+                naar_subfund_id:
+                  type: integer
+                hoeveelheid:
+                  type: number
+                  format: float
+      responses:
+        '200':
+          description: "Herbegroting succesvol bijgewerkt"
+    delete:
+      summary: "Verwijderen van een Herbegroting"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Herbegroting succesvol verwijderd"

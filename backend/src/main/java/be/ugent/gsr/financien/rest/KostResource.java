@@ -5,6 +5,8 @@ import be.ugent.gsr.financien.model.KostDTO;
 import be.ugent.gsr.financien.service.KostService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +33,9 @@ public class KostResource {
     }
 
     @GetMapping("/boekjaar/{boekjaarID}")
-    public ResponseEntity<List<KostDTO>> getAllKosts(@PathVariable(name = "boekjaarID") final Integer boekjaar) {
+    public ResponseEntity<Page<KostDTO>> getAllKosts(@PathVariable(name = "boekjaarID") final Integer boekjaar, Pageable pageable) {
         Gebruiker gebruiker = (Gebruiker) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(kostService.findAll(gebruiker, boekjaar));
+        return ResponseEntity.ok(kostService.findAll(pageable,gebruiker, boekjaar));
     }
 
     @GetMapping("/{id}")

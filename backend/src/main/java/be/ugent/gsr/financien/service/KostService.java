@@ -10,9 +10,9 @@ import be.ugent.gsr.financien.repos.GebruikerRepository;
 import be.ugent.gsr.financien.repos.KostRepository;
 import be.ugent.gsr.financien.repos.SubBudgetPostRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,14 +45,11 @@ public class KostService {
         this.mailService = mailService;
     }
 
-    public List<KostDTO> findAll(Gebruiker gebruiker, Integer jaartal) {
+    public Page<KostDTO> findAll(Pageable pageable, Gebruiker gebruiker, Integer jaartal) {
         List<SubBudgetPost> visibleSubBudgetPosts = gebruiker.visibleBudgetPosts(subBudgetPostRepository, jaartal);
         // All the subBudgetPosts die de gebruiker kan zien
-        final List<Kost> kosts = kostRepository.findAll().stream().filter(kost -> visibleSubBudgetPosts.contains(kost.getSubBudgetPost())).toList();
-        return kosts.stream()
-                .map(kost -> mapToDTO(kost, new KostDTO()))
-                .toList();
-
+        final Page<Kost> kosts = kostRepository.findKostsBySubBudgetPostIn(visibleSubBudgetPosts ,pageable);
+        return kosts.map(kost -> mapToDTO(kost, new KostDTO()));
     }
 
     public KostDTO get(final Integer id) {

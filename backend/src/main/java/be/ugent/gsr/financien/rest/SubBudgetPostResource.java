@@ -24,7 +24,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/subBudgetPosten", produces = MediaType.APPLICATION_JSON_VALUE)
-//TODO enkel subbudgetposten kunnen opvragen waar je toegang toe hebt.
 public class SubBudgetPostResource {
 
     private final SubBudgetPostService subBudgetPostService;

@@ -1,14 +1,17 @@
 package be.ugent.gsr.financien.service;
 
+import be.ugent.gsr.financien.domain.Gebruiker;
 import be.ugent.gsr.financien.domain.Organisatie;
 import be.ugent.gsr.financien.domain.Rol;
+import be.ugent.gsr.financien.model.GebruikerType;
 import be.ugent.gsr.financien.model.OrganisatieDTO;
 import be.ugent.gsr.financien.repos.GebruikerRepository;
 import be.ugent.gsr.financien.repos.OrganisatieRepository;
 import be.ugent.gsr.financien.repos.RolRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -31,17 +34,29 @@ public class OrganisatieService {
         this.gebruikerRepository = gebruikerRepository;
     }
 
-    public List<OrganisatieDTO> findAll() {
-        final List<Organisatie> organisaties = organisatieRepository.findAll(Sort.by("id"));
+    public List<OrganisatieDTO> findAll(Gebruiker gebruiker) {
+        final List<Organisatie> organisaties;
+        if (gebruiker.getType() == GebruikerType.OTHER) {
+            organisaties = organisatieRepository.findAllByOrganisatieUsersContaining(gebruiker);
+        } else {
+            organisaties = organisatieRepository.findAll();
+        }
         return organisaties.stream()
                 .map(organisatie -> mapToDTO(organisatie, new OrganisatieDTO()))
                 .toList();
     }
 
-    public OrganisatieDTO get(final Integer id) {
-        return organisatieRepository.findById(id)
-                .map(organisatie -> mapToDTO(organisatie, new OrganisatieDTO()))
-                .orElseThrow(NotFoundException::new);
+    public ResponseEntity<OrganisatieDTO> get(final Integer id, Gebruiker gebruiker) {
+        final Organisatie organisatie = organisatieRepository.findById(id).orElseThrow(NotFoundException::new);
+        if (gebruiker.getType() == GebruikerType.OTHER) {
+            if (organisatie.getOrganisatieUsers().contains(gebruiker)){
+                return ResponseEntity.ok(mapToDTO(organisatie, new OrganisatieDTO()));
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        } else {
+            return ResponseEntity.ok(mapToDTO(organisatie, new OrganisatieDTO()));
+        }
     }
 
     public Integer create(final OrganisatieDTO organisatieDTO) {

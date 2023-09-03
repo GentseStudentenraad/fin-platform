@@ -23,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/herbegrotingen", produces = MediaType.APPLICATION_JSON_VALUE)
 @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER')")
-//TODO maken van endpoints die boekjaarafhankelijk zijn
 public class HerbegrotingResource {
 
     private final HerbegrotingService herbegrotingService;
@@ -32,9 +31,9 @@ public class HerbegrotingResource {
         this.herbegrotingService = herbegrotingService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<HerbegrotingDTO>> getAllHerbegrotings() {
-        return ResponseEntity.ok(herbegrotingService.findAll());
+    @GetMapping("/boekjaar/{boekjaarID}")
+    public ResponseEntity<List<HerbegrotingDTO>> getAllHerbegrotings(@PathVariable("boekjaarID") Integer boekjaar) {
+        return ResponseEntity.ok(herbegrotingService.findAll(boekjaar));
     }
 
     @GetMapping("/{id}")
@@ -47,21 +46,24 @@ public class HerbegrotingResource {
     @ApiResponse(responseCode = "201")
     public ResponseEntity<Integer> createHerbegroting(
             @RequestBody @Valid final HerbegrotingDTO herbegrotingDTO) {
-        final Integer createdId = herbegrotingService.create(herbegrotingDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+        return herbegrotingService.create(herbegrotingDTO);
     }
 
+    /**
+     * TODO Is dit nuttig. Een herbegroting zou niet mogen aangepast worden.
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateHerbegroting(@PathVariable(name = "id") final Integer id,
-                                                      @RequestBody @Valid final HerbegrotingDTO herbegrotingDTO) {
-        herbegrotingService.update(id, herbegrotingDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<Integer> updateHerbegroting(
+            @PathVariable(name = "id") final Integer id,
+            @RequestBody @Valid final HerbegrotingDTO herbegrotingDTO) {
+        //herbegrotingService.update(id, herbegrotingDTO);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "403")
     public ResponseEntity<Void> deleteHerbegroting(@PathVariable(name = "id") final Integer id) {
-        // Forbidden om een herbegroting te verwijderen. Herbegrotingen zijn er om een geschiedenis van transacties bij te houden.
+        // Forbidden om een herbegroting te verwijderen. Herbegrotingen zijn er om een geschiedenis bij te houden.
         //herbegrotingService.delete(id);
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }

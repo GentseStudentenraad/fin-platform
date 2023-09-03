@@ -1,6 +1,7 @@
 package be.ugent.gsr.financien.service;
 
 import be.ugent.gsr.financien.domain.Boekjaar;
+import be.ugent.gsr.financien.domain.BudgetPost;
 import be.ugent.gsr.financien.domain.Herbegroting;
 import be.ugent.gsr.financien.domain.SubBudgetPost;
 import be.ugent.gsr.financien.model.HerbegrotingDTO;
@@ -8,7 +9,8 @@ import be.ugent.gsr.financien.repos.BoekjaarRepository;
 import be.ugent.gsr.financien.repos.HerbegrotingRepository;
 import be.ugent.gsr.financien.repos.SubBudgetPostRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,9 +31,9 @@ public class HerbegrotingService {
         this.subBudgetPostRepository = subBudgetPostRepository;
     }
 
-    public List<HerbegrotingDTO> findAll() {
-        final List<Herbegroting> herbegrotings = herbegrotingRepository.findAll(Sort.by("id"));
-        return herbegrotings.stream()
+    public List<HerbegrotingDTO> findAll(Integer boekjaar) {
+        final List<Herbegroting> herbegrotingen = herbegrotingRepository.getHerbegrotingByBoekjaar_Id(boekjaar);
+        return herbegrotingen.stream()
                 .map(herbegroting -> mapToDTO(herbegroting, new HerbegrotingDTO()))
                 .toList();
     }
@@ -42,10 +44,24 @@ public class HerbegrotingService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Integer create(final HerbegrotingDTO herbegrotingDTO) {
+    public ResponseEntity<Integer> create(final HerbegrotingDTO herbegrotingDTO) {
         final Herbegroting herbegroting = new Herbegroting();
         mapToEntity(herbegrotingDTO, herbegroting);
-        return herbegrotingRepository.save(herbegroting).getId();
+
+        SubBudgetPost from = herbegroting.getFromSubBudgetPost();
+        SubBudgetPost to = herbegroting.getToSubBudgetPost();
+
+        if (from.getBudget().compareTo(herbegroting.getHoeveelheid()) < 0){
+            herbegrotingRepository.delete(herbegroting);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        from.setBudget(from.getBudget().subtract(herbegroting.getHoeveelheid()));
+        to.setBudget(to.getBudget().add(herbegroting.getHoeveelheid()));
+
+        subBudgetPostRepository.save(from);
+        subBudgetPostRepository.save(to);
+        return new ResponseEntity<>(herbegrotingRepository.save(herbegroting).getId(), HttpStatus.CREATED);
     }
 
     public void update(final Integer id, final HerbegrotingDTO herbegrotingDTO) {

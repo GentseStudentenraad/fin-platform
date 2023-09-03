@@ -1,5 +1,6 @@
 package be.ugent.gsr.financien.rest;
 
+import be.ugent.gsr.financien.domain.Gebruiker;
 import be.ugent.gsr.financien.model.OrganisatieDTO;
 import be.ugent.gsr.financien.service.OrganisatieService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -7,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/organisaties", produces = MediaType.APPLICATION_JSON_VALUE)
-// TODO juiste auth rollen toevoegen. Je mag enkel organisaties zien waar je aan gekoppeld bent. Of voorzitter/beheerder zijn.
+@PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER')")
 public class OrganisatieResource {
 
     private final OrganisatieService organisatieService;
@@ -31,14 +34,18 @@ public class OrganisatieResource {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER', 'OTHER')")
     public ResponseEntity<List<OrganisatieDTO>> getAllOrganisaties() {
-        return ResponseEntity.ok(organisatieService.findAll());
+        Gebruiker gebruiker = (Gebruiker) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(organisatieService.findAll(gebruiker));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER', 'OTHER')")
     public ResponseEntity<OrganisatieDTO> getOrganisatie(
             @PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(organisatieService.get(id));
+        Gebruiker gebruiker = (Gebruiker) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return organisatieService.get(id, gebruiker);
     }
 
     @PostMapping

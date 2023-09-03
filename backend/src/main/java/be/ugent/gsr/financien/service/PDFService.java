@@ -128,7 +128,7 @@ public class PDFService {
             PDFMergerUtility merger = new PDFMergerUtility();
             merger.appendDocument(pdfDoc, pdfDoc);
 
-            /* Voor elk document in de bewijzen voeg het toe aan de PDF */
+            /* Voor elk document in de bewijzen voeg het achteraan toe aan de PDF */
             for (byte[] toAdd : kost.getBewijzen().stream().map(Document::getPdfData).toList()) {
                 InputStream kostPDFStream = new ByteArrayInputStream(toAdd);
                 merger.appendDocument(pdfDoc, PDDocument.load(kostPDFStream));

@@ -3,8 +3,10 @@ package be.ugent.gsr.financien.service;
 import be.ugent.gsr.financien.domain.Boekjaar;
 import be.ugent.gsr.financien.domain.BudgetPost;
 import be.ugent.gsr.financien.model.BudgetPostDTO;
+import be.ugent.gsr.financien.model.SubBudgetPostDTO;
 import be.ugent.gsr.financien.repos.BoekjaarRepository;
 import be.ugent.gsr.financien.repos.BudgetPostRepository;
+import be.ugent.gsr.financien.repos.SubBudgetPostRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,14 @@ public class BudgetPostService {
     private final BudgetPostRepository budgetPostRepository;
     private final BoekjaarRepository boekjaarRepository;
 
+    private final SubBudgetPostService subBudgetPostService;
+
     public BudgetPostService(final BudgetPostRepository budgetPostRepository,
-                             final BoekjaarRepository boekjaarRepository) {
+                             final BoekjaarRepository boekjaarRepository,
+                             final SubBudgetPostService subBudgetPostService) {
         this.budgetPostRepository = budgetPostRepository;
         this.boekjaarRepository = boekjaarRepository;
+        this.subBudgetPostService = subBudgetPostService;
     }
 
     public List<BudgetPostDTO> findAll() {
@@ -41,6 +47,7 @@ public class BudgetPostService {
     public Integer create(final BudgetPostDTO budgetPostDTO) {
         final BudgetPost budgetPost = new BudgetPost();
         mapToEntity(budgetPostDTO, budgetPost);
+        subBudgetPostService.create(SubBudgetPostDTO.basicBudgetPostDTO(budgetPost, budgetPostDTO.getBudget()));
         return budgetPostRepository.save(budgetPost).getId();
     }
 
@@ -60,6 +67,7 @@ public class BudgetPostService {
         budgetPostDTO.setNaam(budgetPost.getNaam());
         budgetPostDTO.setBeschrijving(budgetPost.getBeschrijving());
         budgetPostDTO.setBoekjaar(budgetPost.getBoekjaar() == null ? null : budgetPost.getBoekjaar().getId());
+        budgetPostDTO.setBudget(budgetPost.getBudget());
         return budgetPostDTO;
     }
 

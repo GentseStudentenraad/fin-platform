@@ -23,7 +23,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document {
+public class Document extends AbstractAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +36,5 @@ public class Document {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kost_id", nullable = false)
     private Kost kost;
-
-    @CreatedBy
-    @Column(nullable = false, updatable = false)
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(nullable = false)
-    private String lastModifiedBy;
 
 }

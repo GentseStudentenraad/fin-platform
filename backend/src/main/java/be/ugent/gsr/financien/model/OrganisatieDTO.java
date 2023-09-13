@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrganisatieDTO {
+public class OrganisatieDTO extends AbstractAuditDTO{
 
     private Integer id;
 

@@ -68,10 +68,10 @@ public class PDFService {
             adresFilled.setValue(organisatie.getAdres());
 
             PDField rekeningnummerFilled = acroForm.getField("Rekeningnummer_filled");
-            rekeningnummerFilled.setValue(organisatie.getRekeningnummer());
+            rekeningnummerFilled.setValue(kost.getBankgegevens().getRekeningnummer());
 
             PDField bic = acroForm.getField("Text1.3.9");
-            bic.setValue(organisatie.getBic());
+            bic.setValue(kost.getBankgegevens().getBic());
 
             PDField totaleBedrag = acroForm.getField("Totale Bedrag");
             totaleBedrag.setValue(kost.getHoeveelheid().toString());
@@ -92,7 +92,7 @@ public class PDFService {
             orgNaam2.setValue(organisatie.getNaam());
 
             PDField rekeningnummer = acroForm.getField("Rekeningnummer_filled");
-            rekeningnummer.setValue(organisatie.getRekeningnummer());
+            rekeningnummer.setValue(kost.getBankgegevens().getRekeningnummer());
 
             PDField adres = acroForm.getField("Adres_filled");
             adres.setValue(organisatie.getAdres());

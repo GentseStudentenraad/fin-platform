@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class Gebruiker implements UserDetails {
+public class Gebruiker extends AbstractAuditableEntity implements UserDetails {
 
 
     @Id
@@ -67,6 +67,9 @@ public class Gebruiker implements UserDetails {
     @Enumerated(EnumType.STRING)
     private GebruikerType type;
 
+    @OneToMany(mappedBy = "gebruiker")
+    private Set<Bankgegevens> bankgegevens;
+
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "gebruiker_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
     private Set<Rol> rol;
@@ -77,14 +80,6 @@ public class Gebruiker implements UserDetails {
 
     @OneToMany(mappedBy = "gebruiker")
     private Set<Kost> costs;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private OffsetDateTime dateCreated;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class HerbegrotingDTO {
+public class HerbegrotingDTO extends AbstractAuditDTO {
 
     private Integer id;
 

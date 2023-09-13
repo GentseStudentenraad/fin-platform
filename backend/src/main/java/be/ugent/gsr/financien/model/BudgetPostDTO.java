@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class BudgetPostDTO {
+public class BudgetPostDTO extends AbstractAuditDTO {
 
     private Integer id;
 

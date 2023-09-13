@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class KostDTO { //TODO add pdf data
+public class KostDTO extends AbstractAuditDTO { //TODO add pdf data TODO add bankgegevens
 
     private Integer id;
 

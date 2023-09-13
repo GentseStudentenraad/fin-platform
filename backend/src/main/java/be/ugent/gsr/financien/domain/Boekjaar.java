@@ -30,7 +30,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Boekjaar {
+public class Boekjaar extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -57,21 +57,5 @@ public class Boekjaar {
 
     @OneToMany(mappedBy = "boekjaar")
     private Set<Herbegroting> herbegrotingen;
-
-    @CreatedBy
-    @Column(nullable = false, updatable = false)
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(nullable = false)
-    private String lastModifiedBy;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private OffsetDateTime dateCreated;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
 
 }

@@ -33,7 +33,7 @@ import java.time.OffsetDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Herbegroting {
+public class Herbegroting extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -66,21 +66,5 @@ public class Herbegroting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_sub_budget_post_id", nullable = false)
     private SubBudgetPost toSubBudgetPost;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private OffsetDateTime dateCreated;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
-
-    @CreatedBy
-    @Column(nullable = false, updatable = false)
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(nullable = false)
-    private String lastModifiedBy;
 
 }

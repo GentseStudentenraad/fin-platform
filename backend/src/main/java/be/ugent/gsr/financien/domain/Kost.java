@@ -40,7 +40,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Kost {
+public class Kost extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -97,16 +97,13 @@ public class Kost {
     @JoinColumn(name = "org_id", nullable = false)
     private Organisatie organisatie;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private OffsetDateTime dateCreated;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bankgegevens_id")
+    private Bankgegevens bankgegevens;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "kost")
     private List<Document> bewijzen;
+    // TODO moet er hiervoor een apparte endpoint die "add document" is? of elke keer als een kost aangepast wordt met een nieuw document wordt het aan de lijst toegevoegd. En dan de endpoint van de documenten zelf gebruiken voor verwijderen
 
     @CreatedBy
     @Column(nullable = false, updatable = false)

@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Organisatie {
+public class Organisatie extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -54,14 +55,8 @@ public class Organisatie {
     @Column(nullable = false)
     private Boolean isRecognized;
 
-    @Column(nullable = false)
-    private String iban;
-
-    @Column(nullable = false)
-    private String bic;
-
-    @Column(nullable = false)
-    private String rekeningnummer;
+    @OneToMany(mappedBy = "organisatie")
+    private Set<Bankgegevens> bankgegevens;
 
     @Column(nullable = false, columnDefinition = "text")
     private String adres;

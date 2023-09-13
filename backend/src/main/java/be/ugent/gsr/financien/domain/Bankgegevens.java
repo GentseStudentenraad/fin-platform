@@ -16,14 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.Set;
 
 
@@ -34,7 +28,9 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BudgetPost extends AbstractAuditableEntity {
+public class Bankgegevens extends AbstractAuditableEntity {
+    // TODO hier een rest, service, repo's, dto voor aanmaken. Toevoegen aan een kost ook (hierdoor dus ook kostDTO aanpassen)
+    //  @service bij delete enkel deleten indien er hier geen kosten aan hangen of enkel "doorgestuurde" kosten aan hangen.
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -51,28 +47,23 @@ public class BudgetPost extends AbstractAuditableEntity {
     private Integer id;
 
     @Column(nullable = false)
-    private String naam;
+    private String iban;
 
     @Column(nullable = false)
-    private String dsvCode;
+    private String bic;
 
-    @Column(columnDefinition = "text")
-    private String beschrijving;
+    @Column(nullable = false)
+    private String rekeningnummer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boekjaar_id", nullable = false)
-    private Boekjaar boekjaar;
+    @JoinColumn(name = "gebruiker_id")
+    private Gebruiker gebruiker;
 
-    @OneToMany(mappedBy = "budgetPost")
-    private Set<SubBudgetPost> subBudgetPosten;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organisatie_id")
+    private Organisatie organisatie;
 
-
-    public BigDecimal getBudget() {
-        return this.subBudgetPosten.stream().map(SubBudgetPost::getBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getBudgetOver() {
-        return this.subBudgetPosten.stream().map(SubBudgetPost::getVerbruiktBudget).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    @OneToMany(mappedBy = "bankgegevens")
+    private Set<Kost> kosten;
 
 }

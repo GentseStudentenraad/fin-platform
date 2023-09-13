@@ -35,7 +35,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubBudgetPost {
+public class SubBudgetPost extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)

@@ -32,7 +32,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rol {
+public class Rol extends AbstractAuditableEntity {
 
     @Id
     @Column(nullable = false, updatable = false)

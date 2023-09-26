@@ -83,13 +83,15 @@ public class RolService {
     }
 
     public Rol mapToEntity(final RolDTO rolDTO, final Rol rol) {
-        rol.setNaam(rolDTO.getNaam());
+        if (rolDTO.getNaam() != null)
+            rol.setNaam(rolDTO.getNaam());
         final List<SubBudgetPost> subBudgetPost = subBudgetPostRepository.findAllById(
                 rolDTO.getSubBudgetPost() == null ? Collections.emptyList() : rolDTO.getSubBudgetPost());
         if (subBudgetPost.size() != (rolDTO.getSubBudgetPost() == null ? 0 : rolDTO.getSubBudgetPost().size())) {
             throw new NotFoundException("one of subBudgetPost not found");
         }
-        rol.setSubBudgetPost(new HashSet<>(subBudgetPost));
+        if (rolDTO.getSubBudgetPost() != null)
+            rol.setSubBudgetPost(new HashSet<>(subBudgetPost));
         return rol;
     }
 

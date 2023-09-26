@@ -95,6 +95,11 @@ public class HerbegrotingService {
         return new ResponseEntity<>(herbegrotingRepository.save(herbegroting).getId(), HttpStatus.CREATED);
     }
 
+    /**
+     * Exist for the completion of things but it is not supposed to be used.
+     * @param id The id of the Herbegroting Entity
+     * @param herbegrotingDTO The DTO containing all the information that has to be updated.
+     */
     public void update(final Integer id, final HerbegrotingDTO herbegrotingDTO) {
         final Herbegroting herbegroting = herbegrotingRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

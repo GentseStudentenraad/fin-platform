@@ -103,18 +103,24 @@ public class OrganisatieService {
 
     public Organisatie mapToEntity(final OrganisatieDTO organisatieDTO,
                                    final Organisatie organisatie) {
-        organisatie.setNaam(organisatieDTO.getNaam());
-        organisatie.setIsRecognized(organisatieDTO.getIsRecognized());
-        organisatie.setBankgegevens(new HashSet<>(
-                bankgegevensRepository.findAllById(organisatieDTO.getBankgegevens())
-        ));
-        organisatie.setAdres(organisatieDTO.getAdres());
+        if (organisatieDTO.getNaam() != null)
+            organisatie.setNaam(organisatieDTO.getNaam());
+        if (organisatieDTO.getIsRecognized() != null)
+            organisatie.setIsRecognized(organisatieDTO.getIsRecognized());
+        if (organisatieDTO.getBankgegevens() != null)
+            organisatie.setBankgegevens(new HashSet<>(
+                    bankgegevensRepository.findAllById(organisatieDTO.getBankgegevens())
+            ));
+        if(organisatieDTO.getAdres() != null)
+            organisatie.setAdres(organisatieDTO.getAdres());
+        /* TODO enkel medewerkers of beheerders mogen rollen aan een organisatie toevoegen.
         final List<Rol> rol = rolRepository.findAllById(
                 organisatieDTO.getRol() == null ? Collections.emptyList() : organisatieDTO.getRol());
         if (rol.size() != (organisatieDTO.getRol() == null ? 0 : organisatieDTO.getRol().size())) {
             throw new NotFoundException("one of rol not found");
         }
         organisatie.setRollen(new HashSet<>(rol));
+         */
         return organisatie;
     }
 

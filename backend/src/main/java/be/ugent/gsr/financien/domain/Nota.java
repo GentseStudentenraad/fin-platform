@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -101,4 +102,9 @@ public class Nota extends AbstractAuditableEntity {
         this.setRemarks(notaDTO.getRemarks());
         this.setStatus(notaDTO.getStatus());
     }
+
+    public BigDecimal totaalBedrag(){
+        return this.kosten.stream().map(Kost::getBedrag).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
 }

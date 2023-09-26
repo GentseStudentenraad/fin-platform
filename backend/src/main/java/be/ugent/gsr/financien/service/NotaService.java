@@ -169,6 +169,8 @@ public class NotaService {
             return new ResponseEntity<>(id, HttpStatus.BAD_REQUEST);
         }
         nota.setStatus(NotaStatus.ONDERTEKEND);
+        nota.getSubBudgetPost().setBudget(nota.getSubBudgetPost().getBudget().subtract(nota.totaalBedrag()));
+        subBudgetPostRepository.save(nota.getSubBudgetPost());
         notaRepository.save(nota);
 
         //Als nota van goedgekeurd naar Ondertekend gaat, mail sturen naar DSV met alle gegevens.

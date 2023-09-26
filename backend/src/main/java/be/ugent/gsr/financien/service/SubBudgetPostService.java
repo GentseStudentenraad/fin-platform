@@ -87,8 +87,6 @@ public class SubBudgetPostService {
                                       final SubBudgetPost subBudgetPost) {
         subBudgetPost.setNaam(subBudgetPostDTO.getNaam());
         subBudgetPost.setBudget(subBudgetPostDTO.getBudget());
-        // Het verbruikt budget wordt enkel aangepast als een nieuwe nota doorgestuurd is naar DSV.
-        //subBudgetPost.setVerbruiktBudget(subBudgetPostDTO.getVerbruiktBudget());
         subBudgetPost.setBeschrijving(subBudgetPostDTO.getBeschrijving());
         subBudgetPost.setAllowCosts(subBudgetPostDTO.getAllowCosts());
         final BudgetPost budgetPost = subBudgetPostDTO.getBudgetPost() == null ? null : budgetPostRepository.findById(subBudgetPostDTO.getBudgetPost())

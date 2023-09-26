@@ -88,22 +88,29 @@ public class GebruikerService implements UserDetailsService {
     }
 
     private Gebruiker mapToEntity(final GebruikerDTO gebruikerDTO, final Gebruiker gebruiker) {
-        gebruiker.setNaam(gebruikerDTO.getNaam());
-        gebruiker.setEmail(gebruikerDTO.getEmail());
-        gebruiker.setWachtwoord(gebruikerDTO.getWachtwoord());
-        gebruiker.setType(gebruikerDTO.getType());
+        if (gebruikerDTO.getNaam() != null)
+            gebruiker.setNaam(gebruikerDTO.getNaam());
+        if (gebruikerDTO.getEmail() != null)
+            gebruiker.setEmail(gebruikerDTO.getEmail());
+        if (gebruikerDTO.getWachtwoord() != null)// TODO misschien een idee om een wachtwoord te encrypten....
+            gebruiker.setWachtwoord(gebruikerDTO.getWachtwoord());
+        /* TODO rollen mogen enkel door medewerkers of beheerders toegekend worden.
         final List<Rol> rol = rolRepository.findAllById(
                 gebruikerDTO.getRol() == null ? Collections.emptyList() : gebruikerDTO.getRol().stream().map(RolDTO::getId).toList());
         if (rol.size() != (gebruikerDTO.getRol() == null ? 0 : gebruikerDTO.getRol().size())) {
             throw new NotFoundException("one of rol not found");
         }
         gebruiker.setRollen(new HashSet<>(rol));
+        */
+
+        /* TODO organisaties mogen enkel door medewerkers of beheerders toegekend worden.
         final List<Organisatie> organisatie = organisatieRepository.findAllById(
                 gebruikerDTO.getOrganisatie() == null ? Collections.emptyList() : gebruikerDTO.getOrganisatie().stream().map(OrganisatieDTO::getId).toList());
         if (organisatie.size() != (gebruikerDTO.getOrganisatie() == null ? 0 : gebruikerDTO.getOrganisatie().size())) {
             throw new NotFoundException("one of organisatie not found");
         }
         gebruiker.setOrganisatie(new HashSet<>(organisatie));
+        */
         return gebruiker;
     }
 

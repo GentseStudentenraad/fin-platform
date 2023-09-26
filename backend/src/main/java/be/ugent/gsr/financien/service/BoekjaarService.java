@@ -50,8 +50,10 @@ public class BoekjaarService {
     }
 
     private Boekjaar mapToEntity(final BoekjaarDTO boekjaarDTO, final Boekjaar boekjaar) {
-        boekjaar.setJaartal(boekjaarDTO.getJaartal());
-        boekjaar.setAfgerond(boekjaarDTO.getAfgerond());
+        if (boekjaarDTO.getJaartal() != null)
+            boekjaar.setJaartal(boekjaarDTO.getJaartal());
+        if (boekjaarDTO.getAfgerond() != null)
+            boekjaar.setAfgerond(boekjaarDTO.getAfgerond());
         return boekjaar;
     }
 

@@ -1,7 +1,7 @@
 package be.ugent.gsr.financien.model;
 
 
-public enum KostStatus {
+public enum NotaStatus {
 
     INGEDIEND,
     GOEDGEKEURD,

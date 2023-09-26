@@ -67,9 +67,9 @@ public class RolService {
                 .orElseThrow(NotFoundException::new);
         // remove many-to-many relations at owning side
         gebruikerRepository.findAllByRol(rol)
-                .forEach(gebruiker -> gebruiker.getRol().remove(rol));
+                .forEach(gebruiker -> gebruiker.getRollen().remove(rol));
         organisatieRepository.findAllByRol(rol)
-                .forEach(organisatie -> organisatie.getRol().remove(rol));
+                .forEach(organisatie -> organisatie.getRollen().remove(rol));
         rolRepository.delete(rol);
     }
 

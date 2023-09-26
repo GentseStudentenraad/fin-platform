@@ -6,7 +6,6 @@ import be.ugent.gsr.financien.model.BudgetPostDTO;
 import be.ugent.gsr.financien.model.SubBudgetPostDTO;
 import be.ugent.gsr.financien.repos.BoekjaarRepository;
 import be.ugent.gsr.financien.repos.BudgetPostRepository;
-import be.ugent.gsr.financien.repos.SubBudgetPostRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,6 @@ public class BudgetPostService {
     public Integer create(final BudgetPostDTO budgetPostDTO) {
         final BudgetPost budgetPost = new BudgetPost();
         mapToEntity(budgetPostDTO, budgetPost);
-        subBudgetPostService.create(SubBudgetPostDTO.basicBudgetPostDTO(budgetPost, budgetPostDTO.getBudget()));
         return budgetPostRepository.save(budgetPost).getId();
     }
 
@@ -68,15 +66,25 @@ public class BudgetPostService {
         budgetPostDTO.setBeschrijving(budgetPost.getBeschrijving());
         budgetPostDTO.setBoekjaar(budgetPost.getBoekjaar() == null ? null : budgetPost.getBoekjaar().getId());
         budgetPostDTO.setBudget(budgetPost.getBudget());
+        budgetPostDTO.setBudgetOver(budgetPost.getBudgetOver());
         return budgetPostDTO;
     }
 
     private BudgetPost mapToEntity(final BudgetPostDTO budgetPostDTO, final BudgetPost budgetPost) {
-        budgetPost.setNaam(budgetPostDTO.getNaam());
-        budgetPost.setBeschrijving(budgetPostDTO.getBeschrijving());
+        if (budgetPostDTO.getNaam() != null)
+            budgetPost.setNaam(budgetPostDTO.getNaam());
+        if (budgetPostDTO.getBeschrijving() != null)
+            budgetPost.setBeschrijving(budgetPostDTO.getBeschrijving());
+        if (budgetPostDTO.getDSVCode() != null)
+            budgetPost.setDsvCode(budgetPostDTO.getDSVCode());
+        if (budgetPostDTO.getBudget() != null)
+            budgetPost.setBudget(budgetPostDTO.getBudget());
+
         final Boekjaar boekjaar = budgetPostDTO.getBoekjaar() == null ? null : boekjaarRepository.findById(budgetPostDTO.getBoekjaar())
                 .orElseThrow(() -> new NotFoundException("boekjaar not found"));
-        budgetPost.setBoekjaar(boekjaar);
+
+        if (boekjaar != null)
+            budgetPost.setBoekjaar(boekjaar);
         return budgetPost;
     }
 

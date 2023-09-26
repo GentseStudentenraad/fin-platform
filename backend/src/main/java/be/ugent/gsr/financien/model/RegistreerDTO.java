@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDAO {
+public class RegistreerDTO {
+    private String Naam;
     private String email;
-    private String password;
+    private String wachtwoord;
+    private String telNr;
 }

@@ -2,7 +2,6 @@ package be.ugent.gsr.financien.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,11 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,7 +21,6 @@ import java.time.OffsetDateTime;
 
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @Builder
@@ -52,19 +45,20 @@ public class Herbegroting extends AbstractAuditableEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal hoeveelheid;
 
+    @Column(nullable = true)
+    private String uitleg;
+
     @Column(nullable = false)
-    private LocalDate datum;
+    private OffsetDateTime datum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "boekjaar_id", nullable = false)
     private Boekjaar boekjaar;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_sub_budget_post_id", nullable = false)
-    private SubBudgetPost fromSubBudgetPost;
+    @Column(nullable = false)
+    private String from;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_sub_budget_post_id", nullable = false)
-    private SubBudgetPost toSubBudgetPost;
+    @Column(nullable = false)
+    private String to;
 
 }

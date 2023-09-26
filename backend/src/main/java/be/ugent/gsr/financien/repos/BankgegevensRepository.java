@@ -1,7 +1,8 @@
 package be.ugent.gsr.financien.repos;
 
-public interface BankgegevensRepository {
+import be.ugent.gsr.financien.domain.Bankgegevens;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    //TODO
+public interface BankgegevensRepository extends JpaRepository<Bankgegevens, Integer> {
 
 }

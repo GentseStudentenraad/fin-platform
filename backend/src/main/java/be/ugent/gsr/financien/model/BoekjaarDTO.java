@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BoekjaarDTO extends AbstractAuditDTO{
+public class BoekjaarDTO extends AbstractAuditableDTO {
 
     private Integer id;
 

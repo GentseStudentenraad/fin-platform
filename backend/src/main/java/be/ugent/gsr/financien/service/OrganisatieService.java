@@ -1,10 +1,12 @@
 package be.ugent.gsr.financien.service;
 
+import be.ugent.gsr.financien.domain.Bankgegevens;
 import be.ugent.gsr.financien.domain.Gebruiker;
 import be.ugent.gsr.financien.domain.Organisatie;
 import be.ugent.gsr.financien.domain.Rol;
 import be.ugent.gsr.financien.model.GebruikerType;
 import be.ugent.gsr.financien.model.OrganisatieDTO;
+import be.ugent.gsr.financien.repos.BankgegevensRepository;
 import be.ugent.gsr.financien.repos.GebruikerRepository;
 import be.ugent.gsr.financien.repos.OrganisatieRepository;
 import be.ugent.gsr.financien.repos.RolRepository;
@@ -15,8 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -27,11 +29,16 @@ public class OrganisatieService {
     private final RolRepository rolRepository;
     private final GebruikerRepository gebruikerRepository;
 
+    private final BankgegevensRepository bankgegevensRepository;
+
     public OrganisatieService(final OrganisatieRepository organisatieRepository,
-                              final RolRepository rolRepository, final GebruikerRepository gebruikerRepository) {
+                              final RolRepository rolRepository,
+                              final GebruikerRepository gebruikerRepository,
+                              final BankgegevensRepository bankgegevensRepository) {
         this.organisatieRepository = organisatieRepository;
         this.rolRepository = rolRepository;
         this.gebruikerRepository = gebruikerRepository;
+        this.bankgegevensRepository = bankgegevensRepository;
     }
 
     public List<OrganisatieDTO> findAll(Gebruiker gebruiker) {
@@ -49,7 +56,7 @@ public class OrganisatieService {
     public ResponseEntity<OrganisatieDTO> get(final Integer id, Gebruiker gebruiker) {
         final Organisatie organisatie = organisatieRepository.findById(id).orElseThrow(NotFoundException::new);
         if (gebruiker.getType() == GebruikerType.OTHER) {
-            if (organisatie.getOrganisatieUsers().contains(gebruiker)){
+            if (organisatie.getOrganisatieUsers().contains(gebruiker)) {
                 return ResponseEntity.ok(mapToDTO(organisatie, new OrganisatieDTO()));
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -82,30 +89,32 @@ public class OrganisatieService {
     }
 
     public OrganisatieDTO mapToDTO(final Organisatie organisatie,
-                                    final OrganisatieDTO organisatieDTO) {
+                                   final OrganisatieDTO organisatieDTO) {
         organisatieDTO.setId(organisatie.getId());
         organisatieDTO.setNaam(organisatie.getNaam());
         organisatieDTO.setIsRecognized(organisatie.getIsRecognized());
-        organisatieDTO.setRekeningnummer(organisatie.getRekeningnummer());
+        organisatieDTO.setBankgegevens(organisatie.getBankgegevens().stream().map(Bankgegevens::getId).toList());
         organisatieDTO.setAdres(organisatie.getAdres());
-        organisatieDTO.setRol(organisatie.getRol().stream()
-                .map(rol -> rol.getId())
+        organisatieDTO.setRol(organisatie.getRollen().stream()
+                .map(Rol::getId)
                 .toList());
         return organisatieDTO;
     }
 
     public Organisatie mapToEntity(final OrganisatieDTO organisatieDTO,
-                                    final Organisatie organisatie) {
+                                   final Organisatie organisatie) {
         organisatie.setNaam(organisatieDTO.getNaam());
         organisatie.setIsRecognized(organisatieDTO.getIsRecognized());
-        organisatie.setRekeningnummer(organisatieDTO.getRekeningnummer());
+        organisatie.setBankgegevens(new HashSet<>(
+                bankgegevensRepository.findAllById(organisatieDTO.getBankgegevens())
+        ));
         organisatie.setAdres(organisatieDTO.getAdres());
         final List<Rol> rol = rolRepository.findAllById(
                 organisatieDTO.getRol() == null ? Collections.emptyList() : organisatieDTO.getRol());
         if (rol.size() != (organisatieDTO.getRol() == null ? 0 : organisatieDTO.getRol().size())) {
             throw new NotFoundException("one of rol not found");
         }
-        organisatie.setRol(rol.stream().collect(Collectors.toSet()));
+        organisatie.setRollen(new HashSet<>(rol));
         return organisatie;
     }
 

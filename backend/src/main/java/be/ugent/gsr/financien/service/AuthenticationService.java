@@ -3,8 +3,8 @@ package be.ugent.gsr.financien.service;
 import be.ugent.gsr.financien.domain.Gebruiker;
 import be.ugent.gsr.financien.model.GebruikerType;
 import be.ugent.gsr.financien.model.JwtAuthenticationResponse;
-import be.ugent.gsr.financien.model.LoginDAO;
-import be.ugent.gsr.financien.model.RegistreerDAO;
+import be.ugent.gsr.financien.model.LoginDTO;
+import be.ugent.gsr.financien.model.RegistreerDTO;
 import be.ugent.gsr.financien.repos.GebruikerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +20,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationResponse registreer(RegistreerDAO request) {
+    public JwtAuthenticationResponse registreer(RegistreerDTO request) {
         var user = Gebruiker.builder().naam(request.getNaam())
                 .email(request.getEmail()).wachtwoord(passwordEncoder.encode(request.getWachtwoord()))
                 .type(GebruikerType.OTHER).telNr(request.getTelNr()).build();
@@ -29,7 +29,7 @@ public class AuthenticationService {
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 
-    public JwtAuthenticationResponse login(LoginDAO request) {
+    public JwtAuthenticationResponse login(LoginDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail())

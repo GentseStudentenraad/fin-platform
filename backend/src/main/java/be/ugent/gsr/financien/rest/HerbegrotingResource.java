@@ -1,6 +1,7 @@
 package be.ugent.gsr.financien.rest;
 
 import be.ugent.gsr.financien.model.HerbegrotingDTO;
+import be.ugent.gsr.financien.model.HerbegrotingResponseDTO;
 import be.ugent.gsr.financien.service.HerbegrotingService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -32,12 +33,12 @@ public class HerbegrotingResource {
     }
 
     @GetMapping("/boekjaar/{boekjaarID}")
-    public ResponseEntity<List<HerbegrotingDTO>> getAllHerbegrotings(@PathVariable("boekjaarID") Integer boekjaar) {
+    public ResponseEntity<List<HerbegrotingResponseDTO>> getAllHerbegrotings(@PathVariable("boekjaarID") Integer boekjaar) {
         return ResponseEntity.ok(herbegrotingService.findAll(boekjaar));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HerbegrotingDTO> getHerbegroting(
+    public ResponseEntity<HerbegrotingResponseDTO> getHerbegroting(
             @PathVariable(name = "id") final Integer id) {
         return ResponseEntity.ok(herbegrotingService.get(id));
     }
@@ -50,13 +51,12 @@ public class HerbegrotingResource {
     }
 
     /**
-     * TODO Is dit nuttig. Een herbegroting zou niet mogen aangepast worden.
+     * Een herbegroting zou niet mogen aangepast worden.
      */
     @PutMapping("/{id}")
     public ResponseEntity<Integer> updateHerbegroting(
             @PathVariable(name = "id") final Integer id,
             @RequestBody @Valid final HerbegrotingDTO herbegrotingDTO) {
-        //herbegrotingService.update(id, herbegrotingDTO);
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 

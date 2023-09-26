@@ -2,7 +2,6 @@ package be.ugent.gsr.financien.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,14 +18,12 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
 
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @Builder
@@ -51,7 +48,7 @@ public class Rol extends AbstractAuditableEntity {
     @Column(nullable = false)
     private String naam;
 
-    @ManyToMany(mappedBy = "rol")
+    @ManyToMany(mappedBy = "rollen")
     private Set<Gebruiker> rolUsers;
 
     @ManyToMany
@@ -62,7 +59,7 @@ public class Rol extends AbstractAuditableEntity {
     )
     private Set<SubBudgetPost> subBudgetPost;
 
-    @ManyToMany(mappedBy = "rol")
+    @ManyToMany(mappedBy = "rollen")
     private Set<Organisatie> organisaties;
 
     @CreatedDate

@@ -1,8 +1,13 @@
 package be.ugent.gsr.financien.domain;
 
+import be.ugent.gsr.financien.model.AbstractAuditableDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,6 +18,10 @@ import java.time.OffsetDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
+@Getter
+@Setter
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public abstract class AbstractAuditableEntity {
 
     @CreatedBy
@@ -31,4 +40,8 @@ public abstract class AbstractAuditableEntity {
     @Column(nullable = false)
     protected OffsetDateTime lastUpdated;
 
+
+    public AbstractAuditableEntity(AbstractAuditableDTO abstractAuditableDTO) {
+        // do nothing since the fields above should be updated automatically.
+    }
 }

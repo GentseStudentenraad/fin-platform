@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class RolDTO extends AbstractAuditDTO {
+public class RolDTO extends AbstractAuditableDTO {
 
     private Integer id;
 

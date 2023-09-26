@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class BudgetPostDTO extends AbstractAuditDTO {
+public class BudgetPostDTO extends AbstractAuditableDTO {
 
     private Integer id;
 
@@ -21,9 +21,14 @@ public class BudgetPostDTO extends AbstractAuditDTO {
     private String beschrijving;
 
     @NotNull
+    private String DSVCode;
+
+    @NotNull
     private Integer boekjaar;
 
     @NotNull
     private BigDecimal budget;
+
+    private BigDecimal budgetOver;
 
 }

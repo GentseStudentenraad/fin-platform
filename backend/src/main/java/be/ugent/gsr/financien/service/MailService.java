@@ -2,7 +2,6 @@ package be.ugent.gsr.financien.service;
 
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamSource;
@@ -26,16 +25,14 @@ public class MailService {
     private String fromMailAdress;
 
     public void sendMailWithAttachment(String to, String subject, String body, InputStreamSource fileToAttach) {
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                mimeMessage.setRecipient(Message.RecipientType.BCC, new InternetAddress(bccMailAdress));
-                mimeMessage.setFrom(new InternetAddress(fromMailAdress));
-                mimeMessage.setSubject(subject);
-                mimeMessage.setText(body);
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                helper.addAttachment("onkost.pdf", fileToAttach);
-            }
+        MimeMessagePreparator preparator = mimeMessage -> {
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            mimeMessage.setRecipient(Message.RecipientType.BCC, new InternetAddress(bccMailAdress));
+            mimeMessage.setFrom(new InternetAddress(fromMailAdress));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setText(body);
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.addAttachment("onkost.pdf", fileToAttach);
         };
         try {
             mailSender.send(preparator);
@@ -44,5 +41,23 @@ public class MailService {
             System.err.println(ex.getMessage());
         }
     }
+
+    public void sendMail(String to, String subject, String body) {
+        MimeMessagePreparator preparator = mimeMessage -> {
+            if (to != null)
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            mimeMessage.setRecipient(Message.RecipientType.BCC, new InternetAddress(bccMailAdress));
+            mimeMessage.setFrom(new InternetAddress(fromMailAdress));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setText(body);
+        };
+        try {
+            mailSender.send(preparator);
+        } catch (MailException ex) {
+            // simply log it and go on...
+            System.err.println(ex.getMessage());
+        }
+    }
+
 
 }

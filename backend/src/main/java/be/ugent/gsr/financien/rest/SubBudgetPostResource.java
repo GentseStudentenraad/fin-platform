@@ -47,8 +47,8 @@ public class SubBudgetPostResource {
     }
 
     /**
-    * Enkel de Beheerders mogen een subbudget post aanmaken
-    * */
+     * Enkel de Beheerders mogen een subbudget post aanmaken
+     */
     @PostMapping
     @ApiResponse(responseCode = "201")
     @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER')")
@@ -60,7 +60,7 @@ public class SubBudgetPostResource {
 
     /**
      * Enkel de Beheerders mogen een subbudget post aanpassen
-     * */
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER')")
     public ResponseEntity<Integer> updateSubBudgetPost(@PathVariable(name = "id") final Integer id,
@@ -71,7 +71,7 @@ public class SubBudgetPostResource {
 
     /**
      * Enkel de Beheerders mogen een subbudget post verwijderen
-     * */
+     */
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
     @PreAuthorize("hasAnyRole('VOORZITTER', 'BEHEERDER')")

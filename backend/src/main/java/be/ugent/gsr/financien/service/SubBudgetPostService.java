@@ -40,8 +40,9 @@ public class SubBudgetPostService {
 
     public ResponseEntity<SubBudgetPostDTO> get(final Integer id, Gebruiker gebruiker) {
         SubBudgetPost subBudgetPost = subBudgetPostRepository.findById(id).orElseThrow(NotFoundException::new);
+        List<SubBudgetPost> accessible = gebruiker.visibleBudgetPosts(subBudgetPostRepository, subBudgetPost.getBudgetPost().getBoekjaar().getJaartal());
 
-        if (gebruiker.visibleBudgetPosts(subBudgetPostRepository, subBudgetPost).stream().map(SubBudgetPost::getId).toList().contains(subBudgetPost.getId())){
+        if (accessible.stream().map(SubBudgetPost::getId).toList().contains(subBudgetPost.getId())) {
             return ResponseEntity.ok(mapToDTO(subBudgetPost, new SubBudgetPostDTO()));
         } else {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -86,7 +87,7 @@ public class SubBudgetPostService {
                                       final SubBudgetPost subBudgetPost) {
         subBudgetPost.setNaam(subBudgetPostDTO.getNaam());
         subBudgetPost.setBudget(subBudgetPostDTO.getBudget());
-        // Het verbruikt budget wordt enkel aangepast als een nieuwe kost doorgestuurd is naar DSV.
+        // Het verbruikt budget wordt enkel aangepast als een nieuwe nota doorgestuurd is naar DSV.
         //subBudgetPost.setVerbruiktBudget(subBudgetPostDTO.getVerbruiktBudget());
         subBudgetPost.setBeschrijving(subBudgetPostDTO.getBeschrijving());
         subBudgetPost.setAllowCosts(subBudgetPostDTO.getAllowCosts());

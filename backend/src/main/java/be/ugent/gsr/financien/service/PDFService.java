@@ -2,6 +2,7 @@ package be.ugent.gsr.financien.service;
 
 import be.ugent.gsr.financien.domain.Document;
 import be.ugent.gsr.financien.domain.Kost;
+import be.ugent.gsr.financien.domain.Nota;
 import be.ugent.gsr.financien.domain.Organisatie;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -18,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +45,7 @@ public class PDFService {
     @Value("${onkost.nota.pdf}")
     private String onkostNotaTemplate;
 
-    public ByteArrayResource fillOnkostNota(Kost kost) {
+    public ByteArrayResource fillOnkostNota(Nota nota) {
 
         InputStream input = null;
         try {
@@ -54,7 +56,7 @@ public class PDFService {
 
         //Load editable pdf file
         try (PDDocument pdfDoc = PDDocument.load(input)) {
-            Organisatie organisatie = kost.getOrganisatie();
+            Organisatie organisatie = nota.getOrganisatie();
 
             PDDocumentCatalog docCatalog = pdfDoc.getDocumentCatalog();
             PDAcroForm acroForm = docCatalog.getAcroForm();
@@ -68,52 +70,61 @@ public class PDFService {
             adresFilled.setValue(organisatie.getAdres());
 
             PDField rekeningnummerFilled = acroForm.getField("Rekeningnummer_filled");
-            rekeningnummerFilled.setValue(kost.getBankgegevens().getRekeningnummer());
+            rekeningnummerFilled.setValue(nota.getBankgegevens().getRekeningnummer());
 
             PDField bic = acroForm.getField("Text1.3.9");
-            bic.setValue(kost.getBankgegevens().getBic());
-
-            PDField totaleBedrag = acroForm.getField("Totale Bedrag");
-            totaleBedrag.setValue(kost.getHoeveelheid().toString());
+            bic.setValue(nota.getBankgegevens().getBic());
 
             PDField motivatieFilled = acroForm.getField("Motivatie_filled");
-            motivatieFilled.setValue(kost.getUitleg());
+            motivatieFilled.setValue(nota.getUitleg());
 
             PDField datumFilled = acroForm.getField("Datum_filled");
-            datumFilled.setValue(kost.getIngediendDatum().toString());
+            datumFilled.setValue(nota.getIngediendDatum().toString());
 
             PDField dsvPost = acroForm.getField("DSV post");
-            dsvPost.setValue(dsv_budgetpostMapping.getOrDefault(kost.getSubBudgetPost().getBudgetPost().getDsvCode(), "extra1"));
+            dsvPost.setValue(dsv_budgetpostMapping.getOrDefault(nota.getSubBudgetPost().getBudgetPost().getDsvCode(), "extra1"));
+
 
             PDField orgNaam = acroForm.getField("Naam Studentenraad");
-            orgNaam.setValue(organisatie.getNaam());
+            orgNaam.setValue(nota.getOrganisatie().getNaam());
 
-            PDField orgNaam2 = acroForm.getField("VolledigeNaam_filled");
-            orgNaam2.setValue(organisatie.getNaam());
+            // Dit is de naam van de persoon/organisatie die de terugbetaling krijgt.
+            if (nota.getGebruiker() != null) {
+                PDField orgNaam2 = acroForm.getField("VolledigeNaam_filled");
+                orgNaam2.setValue(organisatie.getNaam());
+            } else if (nota.getOrganisatie() != null) {
+                PDField orgNaam2 = acroForm.getField("VolledigeNaam_filled");
+                orgNaam2.setValue(organisatie.getNaam());
+            }
 
             PDField rekeningnummer = acroForm.getField("Rekeningnummer_filled");
-            rekeningnummer.setValue(kost.getBankgegevens().getRekeningnummer());
+            rekeningnummer.setValue(nota.getBankgegevens().getRekeningnummer());
 
             PDField adres = acroForm.getField("Adres_filled");
             adres.setValue(organisatie.getAdres());
 
             PDField tel_nr_verantwoordelijke = acroForm.getField("Telefoonnummer verantwoordelijke");
-            tel_nr_verantwoordelijke.setValue(kost.getGebruiker().getTelNr());
+            tel_nr_verantwoordelijke.setValue(nota.getGebruiker().getTelNr());
+            int i = 1;
+            BigDecimal totaal_bedrag = BigDecimal.valueOf(0);
+            for (Kost kost : nota.getKosten()) {
+                PDField datum_kost = acroForm.getField("Datum" + i);
+                datum_kost.setValue(kost.getKostDatum().toString());
 
-            PDField datum_kost = acroForm.getField("Datum1");
-            datum_kost.setValue(kost.getCostDatum().toString());
+                PDField uitleg_kost = acroForm.getField("Voorwerp van terugbetaling " + i);
+                uitleg_kost.setValue(kost.getUitleg());
 
-            PDField uitleg_kost = acroForm.getField("Voorwerp van terugbetaling 1");
-            uitleg_kost.setValue(kost.getUitleg());
+                PDField bedrag_kost = acroForm.getField("Bedrag" + i);
+                bedrag_kost.setValue(kost.getBedrag().toString());
+                totaal_bedrag = totaal_bedrag.add(kost.getBedrag());
+                i++;
+            }
 
-            PDField bedrag_kost = acroForm.getField("Bedrag1");
-            bedrag_kost.setValue(kost.getHoeveelheid().toString());
-
-            PDField bedrag_totaal = acroForm.getField("Totale Bedrag");
-            bedrag_totaal.setValue(kost.getHoeveelheid().toString()); // Zelfde als bedrag 1 want we vullen 1 kost in per document.
+            PDField totaleBedrag = acroForm.getField("Totale Bedrag");
+            totaleBedrag.setValue(totaal_bedrag.toString());
 
             PDField naam_indiener = acroForm.getField("VolledigeNaam_filled");
-            naam_indiener.setValue(kost.getGebruiker().getNaam());
+            naam_indiener.setValue(nota.getGebruiker().getNaam());
 
             //TODO add handtekening voorzitter. Is dit nodig? want hoe doet DSA dat? "fieldname: 'Signature2.1'"
             //TODO add handtekening aanvrager. Is dit nodig? want hoe doet DSA dat? "fieldname: 'Signature1'"
@@ -129,7 +140,7 @@ public class PDFService {
             merger.appendDocument(pdfDoc, pdfDoc);
 
             /* Voor elk document in de bewijzen voeg het achteraan toe aan de PDF */
-            for (byte[] toAdd : kost.getBewijzen().stream().map(Document::getPdfData).toList()) {
+            for (byte[] toAdd : nota.getBewijzen().stream().map(Document::getPdfData).toList()) {
                 InputStream kostPDFStream = new ByteArrayInputStream(toAdd);
                 merger.appendDocument(pdfDoc, PDDocument.load(kostPDFStream));
             }
@@ -146,11 +157,11 @@ public class PDFService {
         return null;
     }
 
-    public ByteArrayResource makeFactuurPDf(Kost kost) {
+    public ByteArrayResource makeFactuurPDf(Nota nota) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            List<PDDocument> pdfs = kost.getBewijzen().stream()
+            List<PDDocument> pdfs = nota.getBewijzen().stream()
                     .map(Document::getPdfData)
                     .map(ByteArrayInputStream::new).map(input -> {
                         try {

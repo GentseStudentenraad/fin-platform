@@ -11,7 +11,6 @@ import be.ugent.gsr.financien.repos.OrganisatieRepository;
 import be.ugent.gsr.financien.repos.RolRepository;
 import be.ugent.gsr.financien.util.NotFoundException;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -80,7 +78,7 @@ public class GebruikerService implements UserDetailsService {
         gebruikerDTO.setEmail(gebruiker.getEmail());
         gebruikerDTO.setWachtwoord(gebruiker.getWachtwoord());
         gebruikerDTO.setType(gebruiker.getType());
-        gebruikerDTO.setRol(gebruiker.getRol().stream()
+        gebruikerDTO.setRol(gebruiker.getRollen().stream()
                 .map(rol -> rolService.mapToDTO(rol, new RolDTO()))
                 .toList());
         gebruikerDTO.setOrganisatie(gebruiker.getOrganisatie().stream()
@@ -99,7 +97,7 @@ public class GebruikerService implements UserDetailsService {
         if (rol.size() != (gebruikerDTO.getRol() == null ? 0 : gebruikerDTO.getRol().size())) {
             throw new NotFoundException("one of rol not found");
         }
-        gebruiker.setRol(new HashSet<>(rol));
+        gebruiker.setRollen(new HashSet<>(rol));
         final List<Organisatie> organisatie = organisatieRepository.findAllById(
                 gebruikerDTO.getOrganisatie() == null ? Collections.emptyList() : gebruikerDTO.getOrganisatie().stream().map(OrganisatieDTO::getId).toList());
         if (organisatie.size() != (gebruikerDTO.getOrganisatie() == null ? 0 : gebruikerDTO.getOrganisatie().size())) {

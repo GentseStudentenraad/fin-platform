@@ -1,8 +1,8 @@
 package be.ugent.gsr.financien.domain;
 
+import be.ugent.gsr.financien.model.BankgegevensDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,21 +16,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Set;
 
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bankgegevens extends AbstractAuditableEntity {
-    // TODO hier een rest, service, repo's, dto voor aanmaken. Toevoegen aan een kost ook (hierdoor dus ook kostDTO aanpassen)
-    //  @service bij delete enkel deleten indien er hier geen kosten aan hangen of enkel "doorgestuurde" kosten aan hangen.
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -46,6 +42,9 @@ public class Bankgegevens extends AbstractAuditableEntity {
     )
     private Integer id;
 
+    @Column(nullable = true)
+    private String naam;
+
     @Column(nullable = false)
     private String iban;
 
@@ -54,6 +53,9 @@ public class Bankgegevens extends AbstractAuditableEntity {
 
     @Column(nullable = false)
     private String rekeningnummer;
+
+    @Column(nullable = false)
+    private String kaarthouder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gebruiker_id")
@@ -64,6 +66,7 @@ public class Bankgegevens extends AbstractAuditableEntity {
     private Organisatie organisatie;
 
     @OneToMany(mappedBy = "bankgegevens")
-    private Set<Kost> kosten;
+    private Set<Nota> notas;
+
 
 }

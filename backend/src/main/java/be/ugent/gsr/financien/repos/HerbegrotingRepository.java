@@ -1,6 +1,5 @@
 package be.ugent.gsr.financien.repos;
 
-import be.ugent.gsr.financien.domain.Boekjaar;
 import be.ugent.gsr.financien.domain.Herbegroting;
 import org.springframework.data.jpa.repository.JpaRepository;
 

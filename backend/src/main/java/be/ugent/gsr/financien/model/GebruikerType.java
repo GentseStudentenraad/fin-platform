@@ -3,7 +3,7 @@ package be.ugent.gsr.financien.model;
 
 public enum GebruikerType {
 
-    VOORZITTER,
+    MEDEWERKER,
     BEHEERDER,
     OTHER
 

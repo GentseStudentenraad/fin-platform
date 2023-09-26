@@ -11,6 +11,7 @@ import java.util.List;
 public interface OrganisatieRepository extends JpaRepository<Organisatie, Integer> {
 
     List<Organisatie> findAllByRol(Rol rol);
+
     List<Organisatie> findAllByOrganisatieUsersContaining(Gebruiker gebruiker);
 
 }

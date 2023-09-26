@@ -8,13 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 
 @Getter
 @Setter
-public class HerbegrotingDTO extends AbstractAuditableDTO {
+public class HerbegrotingResponseDTO extends AbstractAuditableDTO {
 
     private Integer id;
 
@@ -34,9 +33,9 @@ public class HerbegrotingDTO extends AbstractAuditableDTO {
     private Integer boekjaar;
 
     @NotNull
-    private Integer fromPost;
+    private String fromPost;
 
     @NotNull
-    private Integer toPost;
+    private String toPost;
 
 }

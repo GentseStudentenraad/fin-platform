@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrganisatieDTO extends AbstractAuditDTO{
+public class OrganisatieDTO extends AbstractAuditableDTO {
 
     private Integer id;
 
@@ -24,8 +24,7 @@ public class OrganisatieDTO extends AbstractAuditDTO{
     private Boolean isRecognized;
 
     @NotNull
-    @Size(max = 255)
-    private String rekeningnummer;
+    private List<Integer> bankgegevens;
 
     @NotNull
     private String adres;

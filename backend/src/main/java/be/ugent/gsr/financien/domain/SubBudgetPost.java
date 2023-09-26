@@ -2,7 +2,6 @@ package be.ugent.gsr.financien.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +20,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -29,7 +27,6 @@ import java.util.Set;
 
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @Builder
@@ -71,16 +68,10 @@ public class SubBudgetPost extends AbstractAuditableEntity {
     private BudgetPost budgetPost;
 
     @OneToMany(mappedBy = "subBudgetPost")
-    private Set<Kost> kosten;
+    private Set<Nota> notas;
 
     @ManyToMany(mappedBy = "subBudgetPost")
     private Set<Rol> roles;
-
-    @OneToMany(mappedBy = "fromSubBudgetPost")
-    private Set<Herbegroting> fromSubBudgetPostHerbegrotings;
-
-    @OneToMany(mappedBy = "toSubBudgetPost")
-    private Set<Herbegroting> toSubBudgetPostHerbegrotings;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

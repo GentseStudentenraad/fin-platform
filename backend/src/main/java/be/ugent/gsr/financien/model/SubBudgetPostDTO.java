@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class SubBudgetPostDTO extends AbstractAuditDTO {
+public class SubBudgetPostDTO extends AbstractAuditableDTO {
 
     private Integer id;
 
@@ -41,22 +41,5 @@ public class SubBudgetPostDTO extends AbstractAuditDTO {
 
     @NotNull
     private Integer budgetPost;
-
-    /**
-    * Functie om een basis lege SubBudgetPost aan te maken die het volledig nog te verdelen budget heeft van deze budgetPost.
-     * TODO Willen we echt een "te verdelen" subbudgetpost?
-     *  Het gaat vrij ambetant worden om elke keer als een subbudgetpost aangemaakt wordt alle subbudgetposten van die budgetpost te overlopen om dan de "te verdelen" budget met x te verminderen.
-     *  Gwn de budgetpost een Budget geven gaat veel gemakkelijker zijn
-    * */
-    public static SubBudgetPostDTO basicBudgetPostDTO(BudgetPost budgetPost, BigDecimal budget) {
-        SubBudgetPostDTO res = new SubBudgetPostDTO();
-        res.setNaam("Te Verdelen");
-        res.setBudget(budget);
-        res.setVerbruiktBudget(BigDecimal.ZERO);
-        res.setBeschrijving("Nog niet verdeeld budget van deze DSV post.");
-        res.setAllowCosts(Boolean.FALSE);
-        res.setBudgetPost(budgetPost.getId());
-        return res;
-    }
 
 }

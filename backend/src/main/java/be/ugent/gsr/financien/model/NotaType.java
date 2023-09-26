@@ -1,9 +1,10 @@
 package be.ugent.gsr.financien.model;
 
 
-public enum KostType {
+public enum NotaType {
 
     FACTUUR,
-    ONKOST
+    ONKOST,
+    PLATFORM_ONLY
 
 }
